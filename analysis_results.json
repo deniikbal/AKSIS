@@ -1,0 +1,27 @@
+{
+  "summary": {
+    "studentsInDb": 1487,
+    "classesInDb": 154,
+    "recordsInJson": 7705
+  },
+  "analysis": {
+    "recordsMissingStudent": 224,
+    "uniqueMissingStudents": 82,
+    "recordsMissingClass": 0,
+    "uniqueMissingClasses": 0,
+    "validRecords": 7481
+  },
+  "sampleMissingStudents": [
+    "839aa752-4886-11e5-835f-dfebc26b04ba",
+    "920b9402-04bd-44ed-bdb0-08eecd919e39",
+    "a2d8d7ff-6f69-4177-a3e1-306fb9f1a908",
+    "ba862eed-2c66-4b2b-8748-64286d187cac",
+    "ab389498-482b-4aa5-8028-9d8b24b125a8",
+    "3325e311-da71-4d22-a75a-25698b742334",
+    "22471446-c737-4c62-a2c9-cb5d162b4669",
+    "2618a81e-d595-471e-8a47-168f7c7a4ef0",
+    "d70e3e6e-5407-4884-8de1-01865bb04b6f",
+    "ab6dc608-4929-11e5-8f78-571d4d74f451"
+  ],
+  "sampleMissingClasses": []
+}
