@@ -27,12 +27,12 @@ export default function Sidebar() {
     return (
         <aside className="w-72 bg-slate-900 border-r border-slate-800 flex flex-col h-screen sticky top-0">
             <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-                <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20 text-cyan-400">
+                <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20 text-blue-400">
                     <Stethoscope className="w-6 h-6" />
                 </div>
                 <div>
-                    <h1 className="font-bold text-white text-lg tracking-tight">SIMKES</h1>
-                    <p className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">School Health System</p>
+                    <h1 className="font-bold text-white text-lg tracking-tight">AKSIS</h1>
+                    <p className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Aplikasi Kesiswaan</p>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@ export default function Sidebar() {
                         to={item.to}
                         className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-800 text-slate-400 font-medium transition-all group"
                         activeProps={{
-                            className: "flex items-center justify-between p-3 rounded-xl bg-cyan-600/10 border border-cyan-500/20 text-cyan-400 font-semibold transition-all shadow-lg shadow-cyan-900/10"
+                            className: "flex items-center justify-between p-3 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 font-semibold transition-all shadow-lg shadow-blue-900/10"
                         }}
                     >
                         <div className="flex items-center gap-3">

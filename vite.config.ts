@@ -15,6 +15,16 @@ const config = defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      // Externalize Node.js-only packages from client bundle
+      external: (id) => {
+        // Only externalize these during client build
+        const nodeOnlyPackages = ['google-auth-library', 'gaxios', 'gcp-metadata', 'gtoken', 'node-fetch'];
+        return nodeOnlyPackages.some(pkg => id === pkg || id.startsWith(`${pkg}/`));
+      },
+    },
+  },
   plugins: [
     devtools(),
     nitro(),

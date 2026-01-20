@@ -27,11 +27,6 @@ export const Route = createRootRoute({
         rel: 'stylesheet',
         href: appCss,
       },
-      {
-        rel: 'icon',
-        type: 'image/svg+xml',
-        href: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%233b82f6"/><path d="M50 20L20 40V70L50 90L80 70V40L50 20Z" fill="white" opacity="0.3"/><path d="M50 35L35 55H65L50 35Z" fill="white"/></svg>',
-      },
     ],
   }),
 

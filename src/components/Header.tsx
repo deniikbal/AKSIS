@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { authClient } from '../lib/auth-client'
+import { authClient } from '@/lib/auth-client'
 import {
   ChevronDown,
   ChevronRight,
@@ -92,7 +92,7 @@ export default function Header() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <Database size={18} className="text-white" />
             </div>
-            <h2 className="text-xl font-bold">SIMKES</h2>
+            <h2 className="text-xl font-bold text-white">AKSIS</h2>
           </div>
           <button
             onClick={() => setIsOpen(false)}
