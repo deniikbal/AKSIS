@@ -49,6 +49,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 
@@ -82,6 +92,8 @@ function CatatanWaliPage() {
     const [selectedSiswaId, setSelectedSiswaId] = useState('');
     const [catatanText, setCatatanText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [idToDelete, setIdToDelete] = useState<string | null>(null);
 
     const students = useMemo(() => {
         if (!classData?.anggota) return [];
@@ -146,13 +158,20 @@ function CatatanWaliPage() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Apakah Anda yakin ingin menghapus catatan ini?")) return;
+    const openDeleteDialog = (id: string) => {
+        setIdToDelete(id);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleDelete = async () => {
+        if (!idToDelete) return;
 
         try {
-            await deleteCatatanWali({ data: id });
-            setCatatans(catatans.filter((c: any) => c.id !== id));
+            await deleteCatatanWali({ data: idToDelete });
+            setCatatans(catatans.filter((c: any) => c.id !== idToDelete));
             toast.success("Catatan berhasil dihapus.");
+            setIsDeleteDialogOpen(false);
+            setIdToDelete(null);
         } catch (error) {
             toast.error("Terjadi kesalahan saat menghapus catatan.");
         }
@@ -211,7 +230,8 @@ function CatatanWaliPage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="rounded-md border overflow-hidden">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block rounded-md border overflow-hidden">
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-muted/50">
@@ -250,7 +270,7 @@ function CatatanWaliPage() {
                                                     <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(c)}>
                                                         <Pencil className="h-4 w-4" />
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(c.id)}>
+                                                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => openDeleteDialog(c.id)}>
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
                                                 </div>
@@ -266,6 +286,48 @@ function CatatanWaliPage() {
                                 )}
                             </TableBody>
                         </Table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden space-y-3">
+                        {filteredCatatans.length > 0 ? (
+                            filteredCatatans.map((c: any) => (
+                                <div key={c.id} className="p-4 border rounded-lg bg-background">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="h-9 w-9 flex-shrink-0">
+                                                <AvatarFallback className="text-[10px] bg-primary/10 text-primary uppercase">
+                                                    {c.siswa?.nama?.split(' ').map((n: any) => n[0]).join('').slice(0, 2)}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <div className="font-medium text-sm">{c.siswa?.nama}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {new Date(c.createdAt).toLocaleDateString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric'
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-1 flex-shrink-0">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenEdit(c)}>
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => openDeleteDialog(c.id)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{c.catatan}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="p-8 text-center text-muted-foreground border rounded-lg">
+                                Belum ada catatan untuk siswa di kelas ini.
+                            </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
@@ -316,6 +378,26 @@ function CatatanWaliPage() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Hapus Catatan?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tindakan ini tidak dapat dibatalkan. Catatan akan dihapus permanen dari sistem.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setIdToDelete(null)}>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-destructive text-white hover:bg-destructive/90"
+                        >
+                            Ya, Hapus
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

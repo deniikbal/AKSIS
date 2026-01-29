@@ -11,6 +11,8 @@ import {
     MoreHorizontal,
     CheckCircle,
     XCircle,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 import {
     Breadcrumb,
@@ -86,6 +88,7 @@ function UsersPage() {
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [newRole, setNewRole] = useState<string>('');
     const [newPassword, setNewPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const pageSize = 10;
 
@@ -420,13 +423,24 @@ function UsersPage() {
                     </DialogHeader>
                     <div className="py-4">
                         <Label>Password Baru</Label>
-                        <Input
-                            type="password"
-                            className="mt-2"
-                            placeholder="Masukkan password baru"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                        />
+                        <div className="relative mt-2">
+                            <Input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Masukkan password baru"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="pr-10"
+                            />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                            </Button>
+                        </div>
                         <p className="text-xs text-muted-foreground mt-2">Minimal 6 karakter</p>
                     </div>
                     <DialogFooter>

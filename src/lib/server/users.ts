@@ -50,9 +50,9 @@ export const resetUserPassword = createServerFn({ method: "POST" })
         if (!session?.user?.id) throw new Error("Unauthorized");
         if ((session.user as any).role !== 'admin') throw new Error("Forbidden");
 
-        // Generate salt and hash password
-        const salt = createHash('sha256').update(Math.random().toString()).digest('hex').slice(0, 16);
-        const hashedPassword = createHash('sha256').update(data.newPassword + salt).digest('hex');
+        // Import Better Auth's internal hashPassword untuk kompatibilitas 100%
+        const { hashPassword } = await import("better-auth/crypto");
+        const hashedPassword = await hashPassword(data.newPassword);
 
         // Update the account password
         const userAccount = await db.query.account.findFirst({
@@ -63,11 +63,6 @@ export const resetUserPassword = createServerFn({ method: "POST" })
             await db.update(account)
                 .set({ password: hashedPassword, updatedAt: new Date() })
                 .where(eq(account.id, userAccount.id));
-
-            // Update salt in user table
-            await db.update(user)
-                .set({ salt, updatedAt: new Date() })
-                .where(eq(user.id, data.userId));
         }
 
         return { success: true };

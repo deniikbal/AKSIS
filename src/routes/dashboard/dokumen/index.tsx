@@ -296,15 +296,16 @@ function DokumenPage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="rounded-md border overflow-hidden">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block rounded-md border overflow-hidden">
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-muted/50">
                                     <TableHead>Nama Berkas</TableHead>
                                     <TableHead>Kategori</TableHead>
                                     {role === 'admin' && <TableHead>Pengunggah</TableHead>}
-                                    <TableHead className="hidden md:table-cell">Ukuran</TableHead>
-                                    <TableHead className="hidden md:table-cell">Tanggal</TableHead>
+                                    <TableHead>Ukuran</TableHead>
+                                    <TableHead>Tanggal</TableHead>
                                     <TableHead className="text-right">Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -336,10 +337,10 @@ function DokumenPage() {
                                                     </div>
                                                 </TableCell>
                                             )}
-                                            <TableCell className="hidden md:table-cell text-xs text-muted-foreground py-2">
+                                            <TableCell className="text-xs text-muted-foreground py-2">
                                                 {formatBytes(doc.ukuran)}
                                             </TableCell>
-                                            <TableCell className="hidden md:table-cell py-2">
+                                            <TableCell className="py-2">
                                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                                     <Calendar className="h-3 w-3" />
                                                     {new Date(doc.createdAt).toLocaleDateString('id-ID')}
@@ -369,6 +370,62 @@ function DokumenPage() {
                                 )}
                             </TableBody>
                         </Table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden space-y-3">
+                        {filteredDocuments.length > 0 ? (
+                            filteredDocuments.map((doc: any) => (
+                                <div key={doc.id} className="p-4 border rounded-lg bg-background">
+                                    <div className="flex items-start gap-3">
+                                        <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
+                                            <FileText className="h-5 w-5 text-primary" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <div className="min-w-0">
+                                                    <div className="font-medium text-sm truncate">{doc.nama}</div>
+                                                    {doc.deskripsi && (
+                                                        <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{doc.deskripsi}</p>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1 flex-shrink-0">
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePreview(doc)}>
+                                                        <Eye className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => {
+                                                        setIdToDelete(doc.id);
+                                                        setIsDeleteOpen(true);
+                                                    }}>
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-wrap items-center gap-2 mt-2">
+                                                <Badge variant="secondary" className="font-normal text-[10px]">
+                                                    {doc.kategori || 'Lainnya'}
+                                                </Badge>
+                                                <span className="text-[10px] text-muted-foreground">{formatBytes(doc.ukuran)}</span>
+                                                <span className="text-muted-foreground">•</span>
+                                                <span className="text-[10px] text-muted-foreground">
+                                                    {new Date(doc.createdAt).toLocaleDateString('id-ID')}
+                                                </span>
+                                            </div>
+                                            {role === 'admin' && doc.uploader?.name && (
+                                                <div className="flex items-center gap-1.5 mt-2 text-[10px] text-muted-foreground">
+                                                    <User className="h-3 w-3" />
+                                                    <span>{doc.uploader?.name}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="p-8 text-center text-muted-foreground border rounded-lg">
+                                Belum ada dokumen yang ditemukan.
+                            </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
@@ -400,7 +457,7 @@ function DokumenPage() {
                         <div className="grid gap-2">
                             <label className="text-sm font-medium">Kategori</label>
                             <Select value={kategori} onValueChange={setKategori}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Pilih kategori..." />
                                 </SelectTrigger>
                                 <SelectContent>
