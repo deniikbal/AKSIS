@@ -5,7 +5,7 @@ import { saveDokumenMetadata } from "./dokumen";
 /**
  * Mendapatkan akses token yang valid menggunakan OAuth 2.0 Refresh Token
  */
-async function getAuthClient() {
+export async function getAuthClient() {
     const clientId = process.env.GOOGLE_DRIVE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_DRIVE_CLIENT_SECRET;
     const refreshToken = process.env.GOOGLE_DRIVE_REFRESH_TOKEN;

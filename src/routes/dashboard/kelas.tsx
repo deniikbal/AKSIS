@@ -13,7 +13,11 @@ import {
     Sparkles,
     Users,
     Users2,
+    QrCode,
+    Loader2,
 } from 'lucide-react';
+import { toast } from 'sonner';
+import { generateClassQRCodes } from '@/lib/server/qrcode-upload';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -83,6 +87,7 @@ function KelasPage() {
     const [selectedKelas, setSelectedKelas] = useState<any>(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [studentSearchValue, setStudentSearchValue] = useState('');
+    const [isGeneratingQR, setIsGeneratingQR] = useState(false);
     const pageSize = 10;
 
     // Group classes by jenis_rombel
@@ -168,6 +173,37 @@ function KelasPage() {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPage(newPage);
+        }
+    };
+
+    const handleGenerateQR = async () => {
+        if (!selectedKelas) return;
+
+        setIsGeneratingQR(true);
+        const toastId = toast.loading(`Sedang membuat QR Code untuk kelas ${selectedKelas.nama}...`);
+
+        try {
+            const result = await generateClassQRCodes({
+                data: {
+                    kelasId: selectedKelas.id,
+                    kelasNama: selectedKelas.nama
+                }
+            });
+
+            if (result.success) {
+                toast.success(`Berhasil membuat ${result.successCount}/${result.total} QR Code di Google Drive`, { id: toastId });
+            } else {
+                toast.error(result.message || "Gagal membuat QR Code", {
+                    id: toastId,
+                    description: result.stack ? "Cek console untuk detail" : undefined
+                });
+                if (result.stack) console.error("Server Error Stack:", result.stack);
+            }
+        } catch (error: any) {
+            console.error("QR Generation Error:", error);
+            toast.error("Terjadi kesalahan koneksi atau server", { id: toastId });
+        } finally {
+            setIsGeneratingQR(false);
         }
     };
 
@@ -437,9 +473,25 @@ function KelasPage() {
                             <Users className="h-5 w-5 text-primary" />
                             Daftar Siswa
                         </SheetTitle>
-                        <SheetDescription>
-                            Kelas {selectedKelas?.nama} • {selectedKelas?.anggota?.length || 0} Siswa
-                        </SheetDescription>
+                        <div className="flex items-center justify-between mt-4">
+                            <SheetDescription>
+                                Kelas {selectedKelas?.nama} • {selectedKelas?.anggota?.length || 0} Siswa
+                            </SheetDescription>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 gap-2"
+                                onClick={handleGenerateQR}
+                                disabled={isGeneratingQR || !selectedKelas?.anggota?.length}
+                            >
+                                {isGeneratingQR ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                    <QrCode className="h-3.5 w-3.5" />
+                                )}
+                                Generate QR
+                            </Button>
+                        </div>
 
                         <div className="relative mt-4">
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
